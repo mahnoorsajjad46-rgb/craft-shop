@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopCraft - Global Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --primary-hover: #4f46e5; --bg-main: #f8fafc; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #e2e8f0; --radius: 12px; --shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.5; }
+        header { background: var(--card-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+        .navbar { max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .logo { font-size: 22px; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .search-wrapper { flex: 1; max-width: 300px; position: relative; }
+        .search-input { width: 100%; padding: 9px 16px 9px 40px; border: 1px solid var(--border-color); border-radius: 30px; outline: none; font-size: 13px; background: var(--bg-main); }
+        .search-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .nav-links { display: flex; list-style: none; gap: 16px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 13px; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--primary); }
+        .lang-select { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 12px; background: #fff; font-weight: 600; cursor: pointer; outline: none; color: var(--text-muted); }
+        .cart-btn { background: var(--primary); color: white; padding: 8px 16px; border-radius: 30px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .cart-btn:hover { background: var(--primary-hover); }
+        .hero { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; text-align: center; padding: 60px 20px; margin-bottom: 30px; }
+        .hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .hero p { font-size: 14px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px 60px 24px; }
+        .section-title { font-size: 20px; font-weight: 600; color: var(--text-main); margin-bottom: 24px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+        .product-card { background: var(--card-bg); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-4px); }
+        .product-img-wrapper { height: 210px; background: #f1f5f9; position: relative; cursor: pointer; overflow: hidden; }
+        .product-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .product-card:hover .product-img-wrapper img { transform: scale(1.04); }
+        .zoom-hint { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; font-size: 11px; border-radius: 6px; opacity: 0; transition: opacity 0.2s; }
+        .product-img-wrapper:hover .zoom-hint { opacity: 1; }
+        .product-info { padding: 18px; display: flex; flex-direction: column; flex: 1; }
+        .store-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-main); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-muted); width: fit-content; margin-bottom: 10px; border: 1px solid var(--border-color); }
+        .product-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
+        .product-price { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .reviews-box { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 4px; }
+        .stars { color: #f59e0b; }
+        .add-to-cart-btn { margin-top: auto; width: 100%; background: #eef2ff; color: var(--primary); border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .add-to-cart-btn:hover { background: var(--primary); color: white; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: var(--card-bg); max-width: 480px; width: 100%; border-radius: var(--radius); overflow: hidden; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .modal-img { width: 100%; height: 280px; object-fit: cover; background: #000; }
+        .modal-body { padding: 24px; }
+        .close-modal { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .cart-drawer { position: fixed; right: -420px; top: 0; width: 380px; height: 100vh; background: var(--card-bg); box-shadow: -10px 0 25px rgba(0,0,0,0.1); z-index: 1100; transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        .cart-drawer.open { right: 0; }
+        .cart-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .cancel-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .cart-footer { padding: 20px 24px; border-top: 1px solid var(--border-color); background: var(--bg-main); }
+        .checkout-btn { width: 100%; background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .checkout-btn:hover { background: #059669; }
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1050; display: none; }
+        .overlay.show { display: block; }
+        footer { background: var(--card-bg); border-top: 1px solid var(--border-color); color: var(--text-muted); text-align: center; padding: 24px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <a href="shop.html" class="logo">🛍️ ShopCraft</a>
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search products..." onkeyup="filterProducts()">
+            </div>
+            <ul class="nav-links">
+                <li><a href="shop.html" data-i18n="home">Home</a></li>
+                <li><a href="buyer-profile.html" data-i18n="profileOrders">Profile & Orders</a></li>
+                <li><a href="index.html" data-i18n="switchRole">Switch</a></li>
+                <li>
+                    <select id="lang-switcher" class="lang-select" onchange="switchLanguage(this.value)">
+                        <option value="en">English 🇬🇧</option>
+                        <option value="ur">اردو 🇵🇰</option>
+                        <option value="ar">العربية 🇸🇦</option>
+                        <option value="es">Español 🇪🇸</option>
+                        <option value="fr">Français 🇫🇷</option>
+                        <option value="hi">हिन्दी 🇮🇳</option>
+                        <option value="zh">中文 🇨🇳</option>
+                        <option value="de">Deutsch 🇩🇪</option>
+                        <option value="ja">日本語 🇯🇵</option>
+                        <option value="ru">Русский 🇷🇺</option>
+                    </select>
+                </li>
+                <li><button class="cart-btn" onclick="toggleCart()">🛒 <span data-i18n="cart">Cart</span> (<span id="cart-count">0</span>)</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 data-i18n="heroTitle">Discover Latest Trends</h1>
+        <p data-i18n="heroSubtitle">Explore gorgeous products added live by verified sellers worldwide.</p>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title" data-i18n="featuredProducts">Featured Products</h2>
+        <div class="product-grid" id="buyer-product-grid"></div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="modal-overlay" id="product-modal" onclick="closeProductModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="closeProductModal()">&times;</button>
+            <img id="modal-img" class="modal-img" src="" alt="Zoomed">
+            <div class="modal-body">
+                <h3 id="modal-title" style="font-size: 18px; font-weight: 600; margin-bottom: 6px;"></h3>
+                <div id="modal-price" style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 10px;"></div>
+                <div id="modal-store" class="store-badge" style="margin-bottom: 10px;"></div>
+                <div id="modal-reviews" class="reviews-box" style="margin-bottom: 0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h3 data-i18n="cartTitle">Your Shopping Cart</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items-container">
+            <p style="color: var(--text-muted); text-align: center; margin-top: 40px;" data-i18n="emptyCart">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;" data-i18n="deliveryDestination">Delivery Destination:</label>
+                <select id="delivery-location" onchange="updateCartUI()" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px; background: white; outline: none;">
+                    <option value="local" data-i18n="localCity">📍 Local City ($3 per item)</option>
+                    <option value="international" data-i18n="outOfCountry">🌍 Out of Country ($10 per item)</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">
+                <span data-i18n="subtotal">Subtotal:</span>
+                <span id="cart-subtotal">$0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">
+                <span data-i18n="totalDelivery">Delivery Charges:</span>
+                <span id="cart-delivery-fee">$0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 15px; margin-bottom: 14px;">
+                <span data-i18n="total">Total:</span>
+                <span id="cart-total-price">$0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="checkoutOrder()" data-i18n="checkout">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+        <button onclick="toggleBuyerChat()" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 30px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(99,102,241,0.25);" data-i18n="chatWithSeller">💬 Chat with Seller</button>
+        <div id="buyer-chat-box" style="display: none; width: 320px; height: 380px; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 10px 25px rgba(0,0,0,0.1); flex-direction: column; overflow: hidden; margin-bottom: 10px; border: 1px solid var(--border-color);">
+            <div style="background: var(--primary); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+                <h4 style="font-size: 14px;" data-i18n="chatWithSeller">Chat with Seller</h4>
+                <button onclick="toggleBuyerChat()" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer;">&times;</button>
+            </div>
+            <div id="buyer-chat-messages" style="flex: 1; padding: 12px; overflow-y: auto; background: var(--bg-main); font-size: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="padding: 10px; border-top: 1px solid var(--border-color); display: flex; gap: 6px; background: white;">
+                <input type="text" id="buyer-chat-input" data-i18n-placeholder="typeMessage" placeholder="Type a message..." style="flex: 1; padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; font-size: 12px;">
+                <button onclick="sendBuyerMessage()" style="background: var(--primary); color: white; border: none; padding: 7px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;" data-i18n="send">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ShopCraft Marketplace. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                home: "Home", profileOrders: "Profile", switchRole: "Switch", cart: "Cart",
+                heroTitle: "Discover Latest Trends", heroSubtitle: "Explore gorgeous products added live by verified sellers worldwide.",
+                featuredProducts: "Featured Products", zoomHint: "🔍 Click to zoom", noRatings: "No ratings yet", reviews: "reviews",
+                cartTitle: "Your Shopping Cart", emptyCart: "Your cart is empty.", deliveryDestination: "Delivery Destination:",
+                localCity: "📍 Local City ($3 per item)", outOfCountry: "🌍 Out of Country ($10 per item)",
+                subtotal: "Subtotal:", totalDelivery: "Delivery Charges:", total: "Total:", checkout: "Proceed to Checkout",
+                chatWithSeller: "💬 Chat with Seller", typeMessage: "Type a message...", send: "Send",
+                addedToCart: " added to cart!", emptyCartAlert: "Your cart is empty!",
+                profileIncompleteAlert: "Complete your profile! Fill phone number and delivery address to checkout.",
+                orderSuccessAlert: "Order placed successfully! You can track status in your profile."
+            },
+            ur: {
+                home: "ہوم", profileOrders: "پروفائل", switchRole: "تبدیل", cart: "کارٹ",
+                heroTitle: "نئی ٹرینڈز دریافت کریں", heroSubtitle: "تصدیق شدہ سیلرز کی طرف سے لائیو شامل کردہ مصنوعات تلاش کریں۔",
+                featuredProducts: "نمایاں مصنوعات", zoomHint: "🔍 زوم کرنے کے لیے کلک کریں", noRatings: "ابھی تک کوئی ریٹنگ نہیں", reviews: "ریویوز",
+                cartTitle: "آپ کی شاپنگ کارٹ", emptyCart: "آپ کا کارٹ خالی ہے۔", deliveryDestination: "ترسیل کی منزل:",
+                localCity: "📍 مقامی شہر (فی آئٹم $3)", outOfCountry: "🌍 ملک سے باہر (فی آئٹم $10)",
+                subtotal: "ذیلی کل:", totalDelivery: "ترسیل کے چارجز:", total: "کل رقم:", checkout: "چیک آؤٹ کے لیے آگے بڑھیں",
+                chatWithSeller: "💬 سیلر سے بات کریں", typeMessage: "پیغام لکھیں...", send: "بھیجیں",
+                addedToCart: " کارٹ میں شامل کر دیا گیا!", emptyCartAlert: "آپ کا کارٹ خالی ہے!",
+                profileIncompleteAlert: "اپنی پروفائل مکمل کریں! آرڈر کے لیے فون نمبر اور پتہ لازمی درج کریں۔",
+                orderSuccessAlert: "آرڈر کامیابی سے ہو گیا! آپ پروفائل میں اسٹیтус دیکھ سکتے ہیں۔"
+            }
+        };
+
+        let currentLang = localStorage.getItem('shopcraft_lang') || 'en';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('shopcraft_lang', lang);
+            applyLanguage();
+            renderBuyerProducts();
+        }
+
+        function applyLanguage() {
+            document.getElementById('lang-switcher').value = currentLang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                let key = el.getAttribute('data-i18n');
+                if (translations[currentLang]?.[key] || translations.en[key]) {
+                    el.innerText = translations[currentLang]?.[key] || translations.en[key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                let key = el.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang]?.[key]) {
+                    el.placeholder = translations[currentLang]?.[key];
+                }
+            });
+        }
+
+        let cart = [];
+        const defaultProducts = [
+            { id: 1, name: "Stylish Sneakers", price: "79.99", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80", storeName: "Fashion Hub", storeLogo: "👟", rating: null, reviewsCount: 0 },
+            { id: 2, name: "Smart Watch Pro", price: "129.99", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80", storeName: "Tech Gadgets", storeLogo: "⌚", rating: null, reviewsCount: 0 }
+        ];
+
+        function getProducts() {
+            let stored = localStorage.getItem('shopcraft_products');
+            let products = stored ? JSON.parse(stored) : [];
+            if (products.length === 0) {
+                localStorage.setItem('shopcraft_products', JSON.stringify(defaultProducts));
+                return defaultProducts;
+            }
+            return products;
+        }
+
+        function renderBuyerProducts(productsToRender = null) {
+            let products = productsToRender || getProducts();
+            let grid = document.getElementById('buyer-product-grid');
+            grid.innerHTML = '';
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted);">No products found.</p>';
+                return;
+            }
+
+            let t = translations[currentLang] || translations.en;
+            products.forEach((prod, index) => {
+                let card = document.createElement('div');
+                card.className = 'product-card';
+                let imgSrc = prod.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80';
+                let storeName = prod.storeName || "ShopCraft Official";
+                let storeLogo = prod.storeLogo || "🏬";
+                
+                let ratingHtml = prod.rating && prod.reviewsCount > 0 
+                    ? `<div class="reviews-box"><span class="stars">⭐ ${prod.rating}</span><span>(${prod.reviewsCount} ${t.reviews})</span></div>`
+                    : `<div class="reviews-box" style="color: #94a3b8;">${t.noRatings}</div>`;
+
+                card.innerHTML = `
+                    <div class="product-img-wrapper" onclick="openProductModal('${imgSrc}', '${prod.name}', '${prod.price}', '${storeName}', '${prod.rating || 0}', '${prod.reviewsCount || 0}')">
+                        <img src="${imgSrc}" alt="${prod.name}">
+                        <div class="zoom-hint">${t.zoomHint}</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="store-badge"><span>${storeLogo}</span><span>${storeName}</span></div>
+                        <div class="product-title">${prod.name}</div>
+                        <div class="product-price">$${prod.price}</div>
+                        ${ratingHtml}
+                        <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(${index})">Add to Cart</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openProductModal(img, title, price, store, rating, reviews) {
+            document.getElementById('modal-img').src = img;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-price').innerText = `$${price}`;
+            document.getElementById('modal-store').innerHTML = `<span>🏬</span> <span>${store}</span>`;
+            
+            let t = translations[currentLang] || translations.en;
+            document.getElementById('modal-reviews').innerHTML = reviews > 0 
+                ? `<span class="stars">⭐ ${rating}</span> <span>(${reviews} ${t.reviews})</span>`
+                : `<span style="color: var(--text-muted);">${t.noRatings}</span>`;
+            
+            document.getElementById('product-modal').classList.add('show');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.remove('show');
+        }
+
+        function filterProducts() {
+            let query = document.getElementById('search-input').value.toLowerCase();
+            let products = getProducts();
+            let filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderBuyerProducts(filtered);
+        }
+
+        function addToCart(index) {
+            let products = getProducts();
+            let product = products[index];
+            cart.push(product);
+            updateCartUI();
+            let t = translations[currentLang] || translations.en;
+            alert(`"${product.name}"` + t.addedToCart);
+        }
+
+        function removeFromCart(cartIndex) {
+            cart.splice(cartIndex, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            let container = document.getElementById('cart-items-container');
+            let subtotalEl = document.getElementById('cart-subtotal');
+            let deliveryFeeEl = document.getElementById('cart-delivery-fee');
+            let totalPriceEl = document.getElementById('cart-total-price');
+            
+            let deliveryType = document.getElementById('delivery-location').value;
+            let perItemFee = deliveryType === 'international' ? 10.00 : 3.00;
+            let t = translations[currentLang] || translations.en;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); text-align: center; margin-top: 40px;">${t.emptyCart}</p>`;
+                subtotalEl.innerText = '$0.00';
+                deliveryFeeEl.innerText = '$0.00';
+                totalPriceEl.innerText = '$0.00';
+                return;
+            }
+
+            container.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach((item, idx) => {
+                subtotal += parseFloat(item.price);
+                let div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div>
+                        <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 2px;">${item.name}</h4>
+                        <p style="color: var(--primary); font-weight: 600; font-size: 13px;">$${item.price} <span style="font-size: 10px; color: var(--text-muted); display: block;">Delivery: $${perItemFee.toFixed(2)}</span></p>
+                    </div>
+                    <button class="cancel-btn" onclick="removeFromCart(${idx})">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+
+            let deliveryFee = cart.length * perItemFee;
+            let total = subtotal + deliveryFee;
+
+            subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
+            deliveryFeeEl.innerText = `$${deliveryFee.toFixed(2)}`;
+            totalPriceEl.innerText = `$${total.toFixed(2)}`;
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-drawer').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+            updateCartUI();
+        }
+
+       function checkoutOrder() {
+            let t = translations[currentLang] || translations.en;
+            if (cart.length === 0) {
+                alert(t.emptyCartAlert);
+                return;
+            }
+
+            // Buyer Profile Check
+            let buyerProfile = JSON.parse(localStorage.getItem('shopcraft_buyer_profile'));
+            if (!buyerProfile || !buyerProfile.name || !buyerProfile.phone || !buyerProfile.address || buyerProfile.address.trim() === "" || buyerProfile.phone.trim() === "" || buyerProfile.address === "Not Provided") {
+                alert(t.profileIncompleteAlert);
+                window.location.href = 'buyer-profile.html';
+                return;
+            }
+
+            let deliveryType = document.getElementById('delivery-location').value;
+            let perItemFee = deliveryType === 'international' ? 10.00 : 3.00;
+
+            let subtotal = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+            let deliveryFee = cart.length * perItemFee;
+            let total = subtotal + deliveryFee;
+
+            let newOrder = {
+                id: Date.now(),
+                buyerName: buyerProfile.name,
+                buyerEmail: buyerProfile.email,
+                buyerPhone: buyerProfile.phone,
+                buyerAddress: buyerProfile.address,
+                items: [...cart],
+                deliveryType: deliveryType === 'international' ? 'Out of Country ($10/item)' : 'Local City ($3/item)',
+                subtotal: subtotal,
+                deliveryFee: deliveryFee,
+                total: total,
+                status: 'Pending'
+            };
+
+            try {
+                let existingOrders = JSON.parse(localStorage.getItem('shopcraft_orders')) || [];
+                existingOrders.push(newOrder);
+                localStorage.setItem('shopcraft_orders', JSON.stringify(existingOrders));
+
+                alert(t.orderSuccessAlert);
+                cart = [];
+                updateCartUI();
+                toggleCart();
+            } catch (error) {
+                alert('Storage limit reached! Kuch purane orders ya products delete karein taake naya order save ho sakay.');
+            }
+        }
+        
+        function toggleBuyerChat() {
+            let box = document.getElementById('buyer-chat-box');
+            box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+            loadBuyerChat();
+        }
+
+        function sendBuyerMessage() {
+            let input = document.getElementById('buyer-chat-input');
+            let text = input.value.trim();
+            if (!text) return;
+            
+            let buyerProfile = JSON.parse(localStorage.getItem('shopcraft_buyer_profile')) || { name: "Guest Buyer", email: "guest@example.com" };
+            let allChats = JSON.parse(localStorage.getItem('shopcraft_all_chats')) || {};
+            let buyerKey = buyerProfile.email;
+
+            if (!allChats[buyerKey]) {
+                allChats[buyerKey] = { buyerName: buyerProfile.name, buyerEmail: buyerProfile.email, messages: [] };
+            }
+            allChats[buyerKey].messages.push({
+                sender: 'buyer', text: text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            });
+            localStorage.setItem('shopcraft_all_chats', JSON.stringify(allChats));
+            input.value = '';
+            loadBuyerChat();
+        }
+
+        function loadBuyerChat() {
+            let buyerProfile = JSON.parse(localStorage.getItem('shopcraft_buyer_profile')) || { email: "guest@example.com" };
+            let allChats = JSON.parse(localStorage.getItem('shopcraft_all_chats')) || {};
+            let container = document.getElementById('buyer-chat-messages');
+            container.innerHTML = '';
+            
+            let chatData = allChats[buyerProfile.email];
+            if (!chatData || chatData.messages.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); text-align: center; margin: auto;">Ask seller anything!</p>`;
+                return;
+            }
+
+            chatData.messages.forEach(m => {
+                let div = document.createElement('div');
+                div.style.padding = '8px 12px';
+                div.style.borderRadius = '8px';
+                div.style.maxWidth = '80%';
+                div.style.wordBreak = 'break-word';
+                if (m.sender === 'buyer') {
+                    div.style.background = '#eef2ff'; div.style.alignSelf = 'flex-end'; div.style.color = '#0f172a';
+                } else {
+                    div.style.background = '#f1f5f9'; div.style.alignSelf = 'flex-start'; div.style.color = '#0f172a';
+                }
+                div.innerHTML = `<div>${m.text}</div><div style="font-size: 9px; color: var(--text-muted); text-align: right; margin-top: 2px;">${m.time}</div>`;
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.onload = () => {
+            applyLanguage();
+            renderBuyerProducts();
+        };
+    </script>
+</body>
+</html>

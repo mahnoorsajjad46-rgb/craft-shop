@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopCraft - Buyer Profile & Orders</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
+        header { background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .navbar { max-width: 1200px; margin: 0 auto; padding: 15px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 20px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 13px; }
+        .nav-links a:hover { color: var(--primary); }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .profile-header { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; padding: 35px; border-radius: 16px; display: flex; align-items: center; gap: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(99,102,241,0.2); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 3px solid rgba(255,255,255,0.8); }
+        .card-box { background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 30px; }
+        .card-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--text); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group.full { grid-column: span 2; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+        input, textarea { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--bg); outline: none; }
+        input:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+        .btn { background: var(--primary); color: white; border: none; padding: 11px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .btn:hover { background: #4f46e5; }
+        .orders-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .orders-table th, .orders-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .orders-table th { color: var(--muted); font-weight: 600; background: var(--bg); }
+        footer { background: var(--card); border-top: 1px solid var(--border); color: var(--muted); text-align: center; padding: 24px; font-size: 13px; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="shop.html" class="logo">🛍️ ShopCraft</a>
+            <ul class="nav-links">
+                <li><a href="shop.html">Back to Store</a></li>
+                <li><a href="index.html">Switch Role</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="profile-header">
+            <div class="avatar" id="header-avatar">👤</div>
+            <div>
+                <h1 id="header-name" style="font-size: 24px; font-weight: 700;">Buyer Name</h1>
+                <p id="header-email" style="font-size: 14px; opacity: 0.9;">email@example.com</p>
+                <p id="header-phone" style="font-size: 13px; opacity: 0.8; margin-top: 2px;">+92 300 0000000</p>
+            </div>
+        </div>
+
+        <!-- Edit Profile -->
+        <div class="card-box">
+            <h2>Complete Your Profile & Delivery Address</h2>
+            <form id="profile-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="b-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="b-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number (Mandatory)</label>
+                        <input type="text" id="b-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Avatar Emoji or Image URL</label>
+                        <input type="text" id="b-avatar" required>
+                    </div>
+                    <div class="form-group full">
+                        <label>Shipping / Delivery Address (Mandatory)</label>
+                        <textarea id="b-address" rows="3" required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Order Tracking -->
+        <div class="card-box">
+            <h2>📦 My Orders & Live Tracking Status</h2>
+            <p style="font-size: 13px; color: var(--muted); margin-bottom: 15px;">Yahan aap apne orders ka live status dekh sakte hain (Pending ya Raste mein hain).</p>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Live Tracking Status</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-tbody">
+                    <tr><td colspan="4" style="text-align: center; color: var(--muted);">No orders found.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2026 ShopCraft Marketplace.</p></footer>
+
+    <script>
+        const defaultBuyer = { name: "Guest Buyer", email: "guest@example.com", phone: "+92 300 0000000", avatar: "👤", address: "" };
+
+        function getProfile() {
+            let stored = localStorage.getItem('shopcraft_buyer_profile');
+            return stored ? JSON.parse(stored) : defaultBuyer;
+        }
+
+        function loadProfileToUI() {
+            let p = getProfile();
+            document.getElementById('b-name').value = p.name;
+            document.getElementById('b-email').value = p.email;
+            document.getElementById('b-phone').value = p.phone;
+            document.getElementById('b-avatar').value = p.avatar;
+            document.getElementById('b-address').value = p.address;
+
+            document.getElementById('header-name').innerText = p.name;
+            document.getElementById('header-email').innerText = p.email;
+            document.getElementById('header-phone').innerText = p.phone;
+            document.getElementById('header-avatar').innerText = p.avatar;
+
+            loadOrders(p.email);
+        }
+
+        function loadOrders(email) {
+            let orders = JSON.parse(localStorage.getItem('shopcraft_orders')) || [];
+            let myOrders = orders.filter(o => o.buyerEmail === email);
+            let tbody = document.getElementById('orders-tbody');
+
+            if (myOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--muted);">No orders placed yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            myOrders.forEach(order => {
+                let itemsText = order.items.map(i => `${i.name} ($${i.price})`).join(', ');
+                let statusBadge = '';
+
+                if (order.status === 'Completed') {
+                    statusBadge = `<span style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px;">✔ Delivered</span>`;
+                } else if (order.status === 'On the way') {
+                    statusBadge = `<span style="background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px;">🚚 Raste mein hain (On the way)</span>`;
+                } else {
+                    statusBadge = `<span style="background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px;">⏳ Pending</span>`;
+                }
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${order.id.toString().slice(-5)}</td>
+                    <td>${itemsText}</td>
+                    <td><b>$${order.total.toFixed(2)}</b></td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let updated = {
+                name: document.getElementById('b-name').value,
+                email: document.getElementById('b-email').value,
+                phone: document.getElementById('b-phone').value,
+                avatar: document.getElementById('b-avatar').value,
+                address: document.getElementById('b-address').value
+            };
+            localStorage.setItem('shopcraft_buyer_profile', JSON.stringify(updated));
+            loadProfileToUI();
+            alert('Profile updated successfully!');
+        });
+
+        window.onload = loadProfileToUI;
+    </script>
+</body>
+</html>

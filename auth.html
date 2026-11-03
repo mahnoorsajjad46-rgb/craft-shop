@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopCraft - Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .auth-card { background: var(--card); width: 100%; max-width: 420px; padding: 40px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+        input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: var(--bg); transition: border-color 0.2s; }
+        input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .btn:hover { background: #4f46e5; }
+        .toggle-text { text-align: center; font-size: 13px; color: var(--muted); margin-top: 20px; cursor: pointer; }
+        .toggle-text span { color: var(--primary); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h2 id="form-title">Create Account</h2>
+        <p id="form-subtitle">Register securely with unique email & phone number.</p>
+        
+        <form id="auth-form" onsubmit="handleAuth(event)">
+            <div class="form-group" id="name-group">
+                <label>Full Name</label>
+                <input type="text" id="user-name" placeholder="e.g. Ali Khan">
+            </div>
+            <div class="form-group" id="phone-group">
+                <label>Phone Number (Unique)</label>
+                <input type="text" id="user-phone" placeholder="e.g. +92 300 1234567">
+            </div>
+            <div class="form-group">
+                <label>Email Address (Unique)</label>
+                <input type="email" id="user-email" placeholder="e.g. ali@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="user-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn" id="submit-btn">Sign Up</button>
+        </form>
+        <div class="toggle-text" onclick="toggleMode()"><span id="toggle-prompt">Already have an account? Sign In</span></div>
+    </div>
+
+    <script>
+        let isSignIn = false;
+        function toggleMode() {
+            isSignIn = !isSignIn;
+            document.getElementById('form-title').innerText = isSignIn ? "Welcome Back" : "Create Account";
+            document.getElementById('form-subtitle').innerText = isSignIn ? "Sign in to access your profile and cart." : "Register securely with unique email & phone number.";
+            document.getElementById('name-group').style.display = isSignIn ? 'none' : 'block';
+            document.getElementById('phone-group').style.display = isSignIn ? 'none' : 'block';
+            document.getElementById('submit-btn').innerText = isSignIn ? "Sign In" : "Sign Up";
+            document.getElementById('toggle-prompt').innerText = isSignIn ? "Don't have an account? Sign Up" : "Already have an account? Sign In";
+        }
+
+        function handleAuth(event) {
+            event.preventDefault();
+            let email = document.getElementById('user-email').value.trim();
+            let password = document.getElementById('user-password').value.trim();
+            let users = JSON.parse(localStorage.getItem('shopcraft_registered_users')) || [];
+
+            if (!isSignIn) {
+                let name = document.getElementById('user-name').value.trim();
+                let phone = document.getElementById('user-phone').value.trim();
+
+                let existing = users.find(u => u.email === email || u.phone === phone);
+                if (existing) {
+                    alert('Yeh Email ya Phone number pehle se registered hai! Ek email/phone par aik hi account ban sakta hai.');
+                    return;
+                }
+
+                let newUser = { name, email, phone, password, avatar: "👤", address: "Not Provided" };
+                users.push(newUser);
+                localStorage.setItem('shopcraft_registered_users', JSON.stringify(users));
+                localStorage.setItem('shopcraft_buyer_profile', JSON.stringify(newUser));
+
+                alert('Account created successfully!');
+                window.location.href = 'shop.html';
+            } else {
+                let found = users.find(u => u.email === email && u.password === password);
+                if (!found) {
+                    alert('Invalid email or password!');
+                    return;
+                }
+                localStorage.setItem('shopcraft_buyer_profile', JSON.stringify(found));
+                alert('Signed in successfully!');
+                window.location.href = 'shop.html';
+            }
+        }
+    </script>
+</body>
+</html>

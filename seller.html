@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopCraft - Seller Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #764ba2; --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
+        header { background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .navbar { max-width: 1200px; margin: 0 auto; padding: 15px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 20px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 13px; }
+        .nav-links a:hover { color: var(--primary); }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card); padding: 25px; border-radius: 14px; border: 1px solid var(--border); border-left: 4px solid var(--primary); }
+        .stat-card h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: var(--text); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; margin-bottom: 30px; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+        .card-box { background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .card-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--text); }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+        input { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--bg); outline: none; }
+        input:focus { border-color: var(--primary); background: #fff; }
+        .preview { width: 60px; height: 60px; border-radius: 8px; background: var(--bg); border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 8px; font-size: 11px; color: var(--muted); }
+        .preview img { width: 100%; height: 100%; object-fit: cover; }
+        .btn { background: var(--primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .btn:hover { background: #623d8a; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; max-height: 400px; overflow-y: auto; }
+        .p-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+        .p-img { height: 110px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .p-img img { width: 100%; height: 100%; object-fit: cover; }
+        .p-info { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .del-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 6px; }
+        .orders-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .orders-table th, .orders-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .orders-table th { color: var(--muted); font-weight: 600; background: var(--bg); }
+        footer { background: var(--card); border-top: 1px solid var(--border); color: var(--muted); text-align: center; padding: 24px; font-size: 13px; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="index.html" class="logo">📦 ShopCraft Seller</a>
+            <ul class="nav-links">
+                <li><a href="shop.html">View Store</a></li>
+                <li><a href="index.html">Switch Role</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        <div style="margin-bottom: 30px;">
+            <h1 style="font-size: 24px; font-weight: 700;">Seller Dashboard 👋</h1>
+            <p style="color: var(--muted); font-size: 14px;">Publish products, chat with buyers, and update incoming order statuses.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Products</h3>
+                <div class="num" id="stat-products">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <div class="num" id="stat-orders">0</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card-box">
+                <h2>Add New Product</h2>
+                <form id="product-form">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="p-name" placeholder="e.g. Designer Jacket" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price ($)</label>
+                        <input type="number" id="p-price" placeholder="e.g. 99.99" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Product Image from Gallery</label>
+                        <input type="file" id="p-img-file" accept="image/*" onchange="compressAndPreviewImg(event)" required>
+                        <div class="preview" id="img-preview">Preview</div>
+                    </div>
+                    <button type="submit" class="btn">Publish Product</button>
+                </form>
+            </div>
+
+            <div class="card-box">
+                <h2>Your Listed Products</h2>
+                <div class="products-grid" id="seller-products-grid"></div>
+            </div>
+        </div>
+
+        <!-- Chat Inbox -->
+        <div class="card-box" style="margin-bottom: 30px;">
+            <h2>Buyer Chat Inbox</h2>
+            <div style="display: grid; grid-template-columns: 280px 1fr; gap: 16px; height: 400px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                <div id="buyers-list" style="background: white; border-right: 1px solid var(--border); overflow-y: auto;"></div>
+                <div style="display: flex; flex-direction: column; background: white;">
+                    <div id="chat-title" style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 13px; background: var(--bg);">Select a buyer</div>
+                    <div id="chat-messages" style="flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+                        <p style="color: var(--muted); text-align: center; margin: auto;">No conversation selected.</p>
+                    </div>
+                    <div style="padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; background: var(--bg);">
+                        <input type="text" id="chat-input" placeholder="Type reply..." style="flex: 1;" disabled>
+                        <button onclick="sendReply()" class="btn" style="width: auto; padding: 8px 16px;" id="send-btn" disabled>Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Management -->
+        <div class="card-box">
+            <h2>Incoming Buyer Orders & Status Manager</h2>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Buyer Name</th>
+                        <th>Phone & Address</th>
+                        <th>Items Ordered</th>
+                        <th>Total</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+                <tbody id="seller-orders-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: var(--muted);">No orders received yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2026 ShopCraft Marketplace. Seller Center.</p></footer>
+
+    <script>
+        let compressedImgData = "";
+        let activeBuyer = null;
+
+        // Image compression function to prevent localStorage quota limit (5MB limit bypass)
+        function compressAndPreviewImg(e) {
+            let file = e.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(evt) {
+                    let img = new Image();
+                    img.src = evt.target.result;
+                    img.onload = function() {
+                        let canvas = document.createElement('canvas');
+                        let ctx = canvas.getContext('2d');
+                        let maxWidth = 400; // Resize width to keep storage light
+                        let scaleSize = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                        
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        compressedImgData = canvas.toDataURL('image/jpeg', 0.7); // Compress quality to 70%
+                        
+                        document.getElementById('img-preview').innerHTML = `<img src="${compressedImgData}">`;
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        const defaultProducts = [
+            { id: 1, name: "Stylish Sneakers", price: "79.99", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80", storeName: "Fashion Hub", storeLogo: "👟" }
+        ];
+
+        function getProducts() {
+            let stored = localStorage.getItem('shopcraft_products');
+            if (!stored) {
+                localStorage.setItem('shopcraft_products', JSON.stringify(defaultProducts));
+                return defaultProducts;
+            }
+            return JSON.parse(stored);
+        }
+
+        function renderSellerProducts() {
+            let products = getProducts();
+            let grid = document.getElementById('seller-products-grid');
+            document.getElementById('stat-products').innerText = products.length;
+            grid.innerHTML = '';
+            products.forEach((p, idx) => {
+                let div = document.createElement('div');
+                div.className = 'p-card';
+                let imgSrc = p.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80';
+                div.innerHTML = `
+                    <div class="p-img"><img src="${imgSrc}"></div>
+                    <div class="p-info">
+                        <div>
+                            <div style="font-size: 12px; font-weight: 600;">${p.name}</div>
+                            <div style="font-size: 12px; color: var(--primary); font-weight: 700;">$${p.price}</div>
+                        </div>
+                        <button class="del-btn" onclick="deleteProd(${idx})">Delete</button>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        document.getElementById('product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let name = document.getElementById('p-name').value;
+            let price = document.getElementById('p-price').value;
+            if (!compressedImgData) { alert('Please select an image!'); return; }
+
+            let products = getProducts();
+            products.push({ id: Date.now(), name, price, image: compressedImgData, storeName: "ShopCraft Store", storeLogo: "🏬" });
+            
+            try {
+                localStorage.setItem('shopcraft_products', JSON.stringify(products));
+                this.reset();
+                document.getElementById('img-preview').innerHTML = 'Preview';
+                compressedImgData = "";
+                renderSellerProducts();
+                alert('Product published successfully!');
+            } catch (error) {
+                alert('Storage limit reached! Kuch purane products delete karein.');
+            }
+        });
+
+        function deleteProd(idx) {
+            let products = getProducts();
+            products.splice(idx, 1);
+            localStorage.setItem('shopcraft_products', JSON.stringify(products));
+            renderSellerProducts();
+        }
+
+        function renderOrders() {
+            let orders = JSON.parse(localStorage.getItem('shopcraft_orders')) || [];
+            let tbody = document.getElementById('seller-orders-tbody');
+            document.getElementById('stat-orders').innerText = orders.length;
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted);">No orders received yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            orders.forEach((o, idx) => {
+                let itemsList = o.items.map(i => `${i.name} ($${i.price})`).join(', ');
+                let status = o.status || 'Pending';
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${o.buyerName}</b><br><span style="font-size: 11px; color: var(--muted);">${o.buyerEmail}</span></td>
+                    <td>${o.buyerPhone}<br><span style="font-size: 11px; color: var(--muted);">${o.buyerAddress}</span></td>
+                    <td>${itemsList}</td>
+                    <td><b>$${o.total.toFixed(2)}</b></td>
+                    <td>
+                        <select onchange="updateStatus(${idx}, this.value)" style="padding: 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; font-weight: 600;">
+                            <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>⏳ Pending</option>
+                            <option value="On the way" ${status === 'On the way' ? 'selected' : ''}>🚚 Raste mein hain</option>
+                            <option value="Completed" ${status === 'Completed' ? 'selected' : ''}>✔ Completed</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateStatus(idx, val) {
+            let orders = JSON.parse(localStorage.getItem('shopcraft_orders')) || [];
+            orders[idx].status = val;
+            localStorage.setItem('shopcraft_orders', JSON.stringify(orders));
+            renderOrders();
+            alert(`Order status updated to "${val}"!`);
+        }
+
+        function loadInbox() {
+            let allChats = JSON.parse(localStorage.getItem('shopcraft_all_chats')) || {};
+            let list = document.getElementById('buyers-list');
+            list.innerHTML = '';
+            let keys = Object.keys(allChats);
+
+            if (keys.length === 0) {
+                list.innerHTML = `<p style="color: var(--muted); text-align: center; padding: 20px; font-size: 12px;">No chats yet.</p>`;
+                return;
+            }
+
+            keys.forEach(email => {
+                let c = allChats[email];
+                let div = document.createElement('div');
+                div.style.padding = '12px 16px';
+                div.style.borderBottom = '1px solid var(--border)';
+                div.style.cursor = 'pointer';
+                div.style.background = activeBuyer === email ? '#f1f5f9' : 'white';
+                div.innerHTML = `<div style="font-weight: 600; font-size: 13px;">${c.buyerName || 'Buyer'}</div><div style="font-size: 11px; color: var(--muted);">${email}</div>`;
+                div.onclick = () => selectChat(email);
+                list.appendChild(div);
+            });
+        }
+
+        function selectChat(email) {
+            activeBuyer = email;
+            loadInbox();
+            renderActiveChat();
+        }
+
+        function renderActiveChat() {
+            if (!activeBuyer) return;
+            let allChats = JSON.parse(localStorage.getItem('shopcraft_all_chats')) || {};
+            let chat = allChats[activeBuyer];
+            let container = document.getElementById('chat-messages');
+            if (!chat) return;
+
+            document.getElementById('chat-title').innerText = `Chat with ${chat.buyerName} (${chat.buyerEmail})`;
+            document.getElementById('chat-input').disabled = false;
+            document.getElementById('send-btn').disabled = false;
+
+            container.innerHTML = '';
+            chat.messages.forEach(m => {
+                let div = document.createElement('div');
+                div.style.padding = '8px 12px';
+                div.style.borderRadius = '8px';
+                div.style.maxWidth = '80%';
+                div.style.wordBreak = 'break-word';
+                if (m.sender === 'seller') {
+                    div.style.background = '#eef2ff'; div.style.alignSelf = 'flex-end';
+                } else {
+                    div.style.background = '#f1f5f9'; div.style.alignSelf = 'flex-start';
+                }
+                div.innerHTML = `<div>${m.text}</div><div style="font-size: 9px; color: var(--muted); text-align: right; margin-top: 2px;">${m.time}</div>`;
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendReply() {
+            if (!activeBuyer) return;
+            let input = document.getElementById('chat-input');
+            let text = input.value.trim();
+            if (!text) return;
+
+            let allChats = JSON.parse(localStorage.getItem('shopcraft_all_chats')) || {};
+            if (allChats[activeBuyer]) {
+                allChats[activeBuyer].messages.push({
+                    sender: 'seller', text: text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                });
+                localStorage.setItem('shopcraft_all_chats', JSON.stringify(allChats));
+                input.value = '';
+                renderActiveChat();
+            }
+        }
+
+        window.onload = () => {
+            renderSellerProducts();
+            renderOrders();
+            loadInbox();
+        };
+
+        setInterval(() => {
+            if (activeBuyer) renderActiveChat();
+            loadInbox();
+            renderOrders();
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopCraft - Seller Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f8fafc; color: #333; }
+        header { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.04); position: sticky; top: 0; z-index: 100; }
+        .navbar { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 700; color: #764ba2; text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 20px; align-items: center; }
+        .nav-links a { text-decoration: none; color: #475569; font-weight: 500; font-size: 14px; transition: color 0.3s; }
+        .nav-links a:hover { color: #764ba2; }
+        .role-badge { background: #764ba2; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .profile-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .profile-header { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); color: white; padding: 40px; border-radius: 16px; display: flex; align-items: center; gap: 30px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(118, 75, 162, 0.2); }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 4px solid rgba(255,255,255,0.8); font-size: 40px; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-info h1 { font-size: 26px; margin-bottom: 5px; font-weight: 700; }
+        .profile-info p { font-size: 15px; opacity: 0.9; }
+        .card-box { background: white; padding: 35px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .card-box h2 { font-size: 20px; color: #1e293b; margin-bottom: 25px; font-weight: 600; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; } .profile-header { flex-direction: column; text-align: center; } }
+        .form-group { margin-bottom: 20px; }
+        .form-group.full-width { grid-column: span 2; }
+        .form-group label { display: block; font-size: 14px; font-weight: 500; color: #475569; margin-bottom: 8px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.3s; background: #f8fafc; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #764ba2; background: #fff; box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1); }
+        .save-btn { background: #764ba2; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: background 0.3s; font-size: 15px; }
+        .save-btn:hover { background: #623d8a; }
+        footer { background: #1e293b; color: white; text-align: center; padding: 30px; margin-top: 60px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="index.html" class="logo">ShopCraft 🚀</a>
+            <ul class="nav-links">
+                <li><a href="seller.html">Dashboard</a></li>
+                <li><a href="seller-profile.html" style="color: #764ba2; font-weight: 600;">My Profile</a></li>
+                <li><a href="shop.html">View Store</a></li>
+                <li><a href="index.html">Switch Role</a></li>
+            </ul>
+            <div class="role-badge">Seller Portal</div>
+        </div>
+    </header>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar" id="header-avatar">👩‍💼</div>
+            <div class="profile-info">
+                <h1 id="header-store-name">My Awesome Store</h1>
+                <p id="header-owner-name">Owner: Seller Name</p>
+                <p id="header-email" style="font-size: 13px; opacity: 0.8; margin-top: 4px;">seller@shopcraft.com</p>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <h2>Edit Seller Profile & Information</h2>
+            <form id="profile-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Owner / Seller Name</label>
+                        <input type="text" id="owner-name" placeholder="e.g. Ayesha Khan" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Store Name</label>
+                        <input type="text" id="store-name" placeholder="e.g. Fashionista Hub" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="email" placeholder="e.g. ayesha@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="phone" placeholder="e.g. +92 300 1234567" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Profile Picture URL or Emoji (e.g. 👩‍💼 or https://...)</label>
+                        <input type="text" id="avatar-input" placeholder="Paste image link or emoji" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Store Bio / Description</label>
+                        <textarea id="bio" rows="3" placeholder="Tell buyers about your store..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="save-btn">Save Profile Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ShopCraft Marketplace. Seller Profile Center.</p>
+    </footer>
+
+    <script>
+        const defaultProfile = {
+            owner: "Ayesha Khan", store: "ShopCraft Official Store", email: "ayesha@shopcraft.com", phone: "+92 300 9876543", avatar: "👩‍💼", bio: "Providing the best quality trendy products with fast delivery!"
+        };
+
+        function getProfile() {
+            let stored = localStorage.getItem('shopcraft_seller_profile');
+            return stored ? JSON.parse(stored) : defaultProfile;
+        }
+
+        function loadProfileToUI() {
+            let profile = getProfile();
+            document.getElementById('owner-name').value = profile.owner;
+            document.getElementById('store-name').value = profile.store;
+            document.getElementById('email').value = profile.email;
+            document.getElementById('phone').value = profile.phone;
+            document.getElementById('avatar-input').value = profile.avatar;
+            document.getElementById('bio').value = profile.bio;
+
+            document.getElementById('header-store-name').innerText = profile.store;
+            document.getElementById('header-owner-name').innerText = "Owner: " + profile.owner;
+            document.getElementById('header-email').innerText = profile.email;
+
+            let avatarEl = document.getElementById('header-avatar');
+            if (profile.avatar.startsWith('http')) {
+                avatarEl.innerHTML = `<img src="${profile.avatar}" alt="Avatar">`;
+            } else {
+                avatarEl.innerHTML = profile.avatar;
+            }
+        }
+
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let updatedProfile = {
+                owner: document.getElementById('owner-name').value,
+                store: document.getElementById('store-name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                avatar: document.getElementById('avatar-input').value,
+                bio: document.getElementById('bio').value
+            };
+            localStorage.setItem('shopcraft_seller_profile', JSON.stringify(updatedProfile));
+            loadProfileToUI();
+            alert('Profile updated successfully!');
+        });
+
+        window.onload = loadProfileToUI;
+    </script>
+</body>
+</html>
